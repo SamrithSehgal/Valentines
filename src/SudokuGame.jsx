@@ -25,9 +25,13 @@ const PUZZLE = [
   [0,0,0,0,0,4,0,0,0],
 ]
 
-const HEART_CELLS = [
-  [0,4],[1,1],[2,7],[3,0],[4,8],[5,3],[6,6],[7,5],[8,2]
-]
+const getOneCells = (grid) => {
+  const cells = []
+  for (let r = 0; r < 9; r++)
+    for (let c = 0; c < 9; c++)
+      if (grid[r][c] === 1) cells.push([r, c])
+  return cells
+}
 
 function SudokuGame({ onNext }) {
   const [grid, setGrid] = useState(() => PUZZLE.map(row => row.map(val => val)))
@@ -106,7 +110,8 @@ function SudokuGame({ onNext }) {
     return () => window.removeEventListener('keydown', handler)
   })
 
-  const isHeartCell = (r, c) => HEART_CELLS.some(([hr, hc]) => hr === r && hc === c)
+  const heartCells = heartReveal ? getOneCells(grid) : []
+  const isHeartCell = (r, c) => heartCells.some(([hr, hc]) => hr === r && hc === c)
   const isSelected = (r, c) => selected && selected[0] === r && selected[1] === c
   const isHighlighted = (r, c) => {
     if (!selected) return false
