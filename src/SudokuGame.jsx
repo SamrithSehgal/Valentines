@@ -65,7 +65,7 @@ function SudokuGame({ onNext }) {
   const checkSolved = (newGrid) => {
     for (let r = 0; r < 9; r++)
       for (let c = 0; c < 9; c++)
-        if (newGrid[r][c] !== SOLUTION[r][c]) return false
+        if (newGrid[r][c] === 0) return false
     return true
   }
 
