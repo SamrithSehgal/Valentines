@@ -1,0 +1,297 @@
+.minesweeper-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #fce4ec 0%, #f8d0d8 40%, #f5c6d0 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+  }
+  
+  .minesweeper-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: msFadeIn 0.6s ease-out;
+  }
+  
+  @keyframes msFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .ms-title {
+    font-family: 'Caveat', cursive;
+    font-size: 36px;
+    font-weight: 700;
+    color: #c62828;
+    text-align: center;
+    margin: 0;
+  }
+  
+  .ms-subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: #ad1457;
+    opacity: 0.8;
+    margin: -8px 0 0 0;
+    text-align: center;
+  }
+  
+  .ms-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .ms-flag-count {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #c2185b;
+    background: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(194, 24, 91, 0.15);
+  }
+  
+  .ms-reset-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #e91e63, #f06292);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .ms-reset-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  }
+  
+  .ms-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    width: min(396px, 90vw);
+    height: min(396px, 90vw);
+    background: #f8bbd0;
+    border: 3px solid #880e4f;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+      0 8px 32px rgba(136, 14, 79, 0.15),
+      0 2px 8px rgba(0, 0, 0, 0.08);
+    gap: 2px;
+    padding: 2px;
+    transition: box-shadow 0.6s ease;
+  }
+  
+  .ms-grid-won {
+    box-shadow:
+      0 0 40px rgba(233, 30, 99, 0.3),
+      0 8px 32px rgba(136, 14, 79, 0.2);
+  }
+  
+  .ms-grid-lost {
+    box-shadow:
+      0 0 30px rgba(211, 47, 47, 0.3);
+  }
+  
+  .ms-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .ms-cell.hidden {
+    background: linear-gradient(145deg, #f48fb1, #ec407a);
+    box-shadow:
+      inset 1px 1px 2px rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ms-cell.hidden:hover {
+    background: linear-gradient(145deg, #f06292, #e91e63);
+    transform: scale(1.03);
+  }
+  
+  .ms-cell.hidden:active {
+    transform: scale(0.96);
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .ms-cell.revealed {
+    background: #fff5f7;
+    cursor: default;
+  }
+  
+  .ms-cell.mine-cell {
+    background: #ffcdd2;
+  }
+  
+  .mine-icon {
+    font-size: clamp(12px, 3.5vw, 18px);
+    line-height: 1;
+  }
+  
+  .cell-num {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(12px, 3.5vw, 18px);
+    font-weight: 700;
+    line-height: 1;
+  }
+  
+  .ms-cell.flagged {
+    background: linear-gradient(145deg, #f48fb1, #ec407a);
+  }
+  
+  .flag-heart {
+    color: white;
+    font-size: clamp(14px, 3.5vw, 20px);
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    animation: flagPlace 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes flagPlace {
+    0%   { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+  
+  .ms-cell.flag-won .flag-heart {
+    animation: flagCelebrate 0.6s ease infinite alternate;
+  }
+  
+  @keyframes flagCelebrate {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.2); }
+  }
+  
+  .explosion-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  .explosion-heart {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: var(--size);
+    color: #e91e63;
+    opacity: 0;
+    animation: explodeHeart 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--delay) forwards;
+    filter: drop-shadow(0 2px 4px rgba(233, 30, 99, 0.4));
+  }
+  
+  @keyframes explodeHeart {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(0);
+      opacity: var(--opacity);
+    }
+    15% {
+      transform: translate(calc(var(--vx) * 0.15), calc(var(--vy) * 0.15)) rotate(calc(var(--rotation) * 0.3)) scale(1.2);
+      opacity: var(--opacity);
+    }
+    50% {
+      opacity: var(--opacity);
+    }
+    100% {
+      transform: translate(var(--vx), calc(var(--vy) + 100px)) rotate(var(--rotation)) scale(0.3);
+      opacity: 0;
+    }
+  }
+  
+  .minesweeper-container .num-btn {
+    width: auto;
+    padding: 8px 20px;
+    border: 2px solid #f48fb1;
+    border-radius: 12px;
+    background: white;
+    color: #c2185b;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .minesweeper-container .num-btn:hover {
+    background: #fce4ec;
+    border-color: #e91e63;
+    transform: translateY(-2px);
+  }
+  
+  .ms-next-button {
+    background: linear-gradient(135deg, #e91e63, #f06292);
+    color: white;
+    border: none;
+    padding: 14px 48px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(233, 30, 99, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 60;
+    animation: msFadeIn 0.6s ease 0.5s both;
+  }
+  
+  .ms-next-button:hover {
+    background: linear-gradient(135deg, #c2185b, #e91e63);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(233, 30, 99, 0.4);
+  }
+  
+  .ms-next-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+  
+  .ms-next-button .arrow {
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+  
+  .ms-next-button:hover .arrow {
+    transform: translateX(4px);
+  }
+  
+  @media (max-width: 480px) {
+    .ms-title {
+      font-size: 28px;
+    }
+  
+    .ms-subtitle {
+      font-size: 17px;
+    }
+  
+    .ms-grid {
+      gap: 1.5px;
+      padding: 1.5px;
+    }
+  }

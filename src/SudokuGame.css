@@ -1,0 +1,310 @@
+.sudoku-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fce4ec 0%, #f8d0d8 40%, #f5c6d0 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.sudoku-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sudoku-title {
+  font-family: 'Caveat', cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: #c62828;
+  text-align: center;
+  margin: 0;
+}
+
+.sudoku-subtitle {
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #ad1457;
+  opacity: 0.8;
+  margin: -12px 0 0 0;
+  text-align: center;
+}
+
+.sudoku-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: min(420px, 90vw);
+  height: min(420px, 90vw);
+  background: white;
+  border: 3px solid #880e4f;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 32px rgba(136, 14, 79, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  outline: none;
+  transition: box-shadow 0.6s ease;
+}
+
+.grid-solved {
+  box-shadow:
+    0 0 40px rgba(233, 30, 99, 0.3),
+    0 8px 32px rgba(136, 14, 79, 0.2);
+}
+
+.sudoku-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f8bbd0;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.sudoku-cell.border-right {
+  border-right: 2.5px solid #c2185b;
+}
+
+.sudoku-cell.border-bottom {
+  border-bottom: 2.5px solid #c2185b;
+}
+
+.cell-value {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(14px, 4vw, 22px);
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sudoku-cell.given {
+  background: #fce4ec;
+}
+
+.sudoku-cell.given .cell-value {
+  color: #880e4f;
+}
+
+.sudoku-cell.editable {
+  background: white;
+}
+
+.sudoku-cell.editable .cell-value {
+  color: #ad1457;
+}
+
+.sudoku-cell.selected {
+  background: #f48fb1 !important;
+  z-index: 2;
+}
+
+.sudoku-cell.selected .cell-value {
+  color: white;
+  transform: scale(1.1);
+}
+
+.sudoku-cell.highlighted {
+  background: #fce4ec;
+}
+
+.sudoku-cell.error .cell-value {
+  color: #d32f2f;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+.sudoku-cell.heart-cell {
+  animation: heartPulse 0.6s ease forwards;
+  animation-delay: calc(var(--i, 0) * 0.12s);
+}
+
+.sudoku-cell.heart-cell .cell-value {
+  color: white !important;
+  font-weight: 800;
+  transform: scale(1.2);
+}
+
+.sudoku-grid .sudoku-cell:nth-child(5).heart-cell  { --i: 0; }
+.sudoku-grid .sudoku-cell:nth-child(11).heart-cell { --i: 1; }
+.sudoku-grid .sudoku-cell:nth-child(26).heart-cell { --i: 2; }
+.sudoku-grid .sudoku-cell:nth-child(28).heart-cell { --i: 3; }
+.sudoku-grid .sudoku-cell:nth-child(45).heart-cell { --i: 4; }
+.sudoku-grid .sudoku-cell:nth-child(49).heart-cell { --i: 5; }
+.sudoku-grid .sudoku-cell:nth-child(61).heart-cell { --i: 6; }
+.sudoku-grid .sudoku-cell:nth-child(69).heart-cell { --i: 7; }
+.sudoku-grid .sudoku-cell:nth-child(75).heart-cell { --i: 8; }
+
+@keyframes heartPulse {
+  0% {
+    background: white;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    background: #e91e63;
+    transform: scale(1);
+    border-radius: 4px;
+    box-shadow: 0 0 12px rgba(233, 30, 99, 0.5);
+  }
+}
+
+.heart-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 50;
+  animation: heartFadeIn 1s ease 1.5s both;
+}
+
+.big-heart {
+  font-size: 200px;
+  color: rgba(233, 30, 99, 0.15);
+  animation: heartFloat 3s ease-in-out infinite;
+  filter: blur(2px);
+}
+
+@keyframes heartFadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes heartFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-15px) scale(1.05); }
+}
+
+.number-pad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 340px;
+}
+
+.num-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #f48fb1;
+  border-radius: 12px;
+  background: white;
+  color: #c2185b;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.num-btn:hover {
+  background: #fce4ec;
+  border-color: #e91e63;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.2);
+}
+
+.num-btn:active {
+  transform: translateY(0);
+  background: #f8bbd0;
+}
+
+.erase-btn {
+  border-color: #ef9a9a;
+  color: #d32f2f;
+}
+
+.erase-btn:hover {
+  background: #ffebee;
+  border-color: #ef5350;
+}
+
+.next-button {
+  background: linear-gradient(135deg, #e91e63, #f06292);
+  color: white;
+  border: none;
+  padding: 14px 48px;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(233, 30, 99, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 60;
+  animation: fadeInUp 0.6s ease 1.8s both;
+}
+
+.next-button:hover {
+  background: linear-gradient(135deg, #c2185b, #e91e63);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(233, 30, 99, 0.4);
+}
+
+.next-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.next-button .arrow {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.next-button:hover .arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 480px) {
+  .sudoku-title {
+    font-size: 28px;
+  }
+
+  .sudoku-subtitle {
+    font-size: 17px;
+  }
+
+  .num-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 17px;
+  }
+
+  .number-pad {
+    gap: 6px;
+  }
+}
